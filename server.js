@@ -398,8 +398,85 @@ app.get("/player-photo/:player_name", (req, res) => {
     });
 });
 
+// ================= ADMIN PANEL =================
+app.get("/admin", (req, res) => {
+    db.query("SELECT * FROM teams", (err, teams) => {
+        if(err) return res.status(500).send(err);
+        if(!teams.length) return res.send("<h2>No teams found</h2>");
+        
+        let html = `<!DOCTYPE html>
+<html>
+<head>
+<title>KCP Admin</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial;background:#0f172a;color:#fff;padding:16px}
+h1{color:#6ee7b7;text-align:center;padding:16px 0;font-size:22px}
+.summary{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.card{background:#1e293b;border-radius:12px;padding:16px;flex:1;min-width:100px;text-align:center}
+.card-val{font-size:32px;font-weight:bold;color:#6ee7b7}
+.card-lbl{font-size:12px;color:#9ca3af;margin-top:4px}
+.team-block{background:#1e293b;border-radius:12px;margin-bottom:20px;overflow:hidden}
+.team-header{background:#065f46;padding:12px 16px;font-size:16px;font-weight:bold;color:#6ee7b7}
+table{width:100%;border-collapse:collapse}
+th{background:#0f2942;color:#93c5fd;padding:8px 12px;text-align:left;font-size:13px}
+td{padding:8px 12px;border-bottom:1px solid #0f172a;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#243447}
+.role{padding:2px 8px;border-radius:8px;font-size:11px;font-weight:bold}
+.role-BAT{background:#1e3a5f;color:#60a5fa}
+.role-BOWL{background:#3b1f1f;color:#f87171}
+.role-AR{background:#1f3b1f;color:#6ee7b7}
+.role-WK{background:#3b2f00;color:#fbbf24}
+.no-players{padding:12px;color:#6b7280;font-style:italic}
+</style>
+</head>
+<body>
+<h1>?? KCP Admin Panel</h1>`;
+
+        let pending = teams.length;
+        let teamData = [];
+
+        teams.forEach((team, i) => {
+            db.query("SELECT * FROM players WHERE team_name=?", [team.team_name], (err, players) => {
+                teamData[i] = { team: team, players: players || [] };
+                pending--;
+                if(pending === 0) {
+                    let totalPlayers = teamData.reduce((s,t) => s + t.players.length, 0);
+                    html += `<div class="summary">
+                        <div class="card"><div class="card-val">${teams.length}</div><div class="card-lbl">Teams</div></div>
+                        <div class="card"><div class="card-val">${totalPlayers}</div><div class="card-lbl">Players</div></div>
+                    </div>`;
+
+                    teamData.forEach(({team, players}) => {
+                        html += `<div class="team-block">
+                        <div class="team-header">?? ${team.team_name} &nbsp;<span style="font-size:13px;color:#a7f3d0">(${players.length} players)</span></div>`;
+                        
+                        if(!players.length) {
+                            html += `<div class="no-players">No players added yet</div>`;
+                        } else {
+                            html += `<table><thead><tr><th>#</th><th>Player</th><th>Role</th></tr></thead><tbody>`;
+                            players.forEach((p, idx) => {
+                                let roleClass = p.role==="Batsman"?"role-BAT":p.role==="Bowler"?"role-BOWL":p.role==="All-Rounder"?"role-AR":"role-WK";
+                                html += `<tr><td>${idx+1}</td><td>?? ${p.player_name}</td><td><span class="role ${roleClass}">${p.role||"-"}</span></td></tr>`;
+                            });
+                            html += `</tbody></table>`;
+                        }
+                        html += `</div>`;
+                    });
+
+                    html += `</body></html>`;
+                    res.send(html);
+                }
+            });
+        });
+    });
+});
+
 // ================= SERVER =================
 
 app.listen(process.env.PORT || 3000, ()=>{
     console.log("✅ Server running on http://localhost:3000");
 });
+
