@@ -185,7 +185,7 @@ app.post("/players",(req,res)=>{
     const {team_name, player_name, role} = req.body;
     db.query("INSERT INTO players (team_name, player_name, role) VALUES (?, ?, ?)",[team_name, player_name, role],(err,result)=>{
         if(err){ console.log(err); res.send("Error"); }
-        else{ res.send("Player Added"); }
+        else{ res.json({message:"Player Added"}); }
     });
 });
 
@@ -479,4 +479,5 @@ tr:hover td{background:#243447}
 app.listen(process.env.PORT || 3000, ()=>{
     console.log("✅ Server running on http://localhost:3000");
 });
+
 
