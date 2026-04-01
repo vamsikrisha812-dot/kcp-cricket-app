@@ -1076,11 +1076,49 @@ function saveAllPlayerStats() {
   .then(function(r){ return r.json(); }).then(function(d){ console.log("Stats saved:", d.message); }).catch(function(e){ console.log("Stats save error:", e); });
 }
 
+function uploadPlayerPhoto(playerName) {
+  var input = document.createElement("input");
+  input.type = "file"; input.accept = "image/*";
+  input.onchange = function() {
+    var file = input.files[0];
+    if (!file) return;
+    var formData = new FormData();
+    formData.append("photo", file);
+    formData.append("player_name", playerName);
+    var btn = document.getElementById("photoUploadBtn");
+    btn.innerText = "Uploading..."; btn.disabled = true;
+    fetch("/upload-photo", { method: "POST", body: formData })
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      if (d.url) {
+        document.getElementById("profilePhoto").src = d.url;
+        document.getElementById("profilePhoto").style.display = "block";
+        document.getElementById("profileEmoji").style.display = "none";
+      }
+      btn.innerText = "?? Change Photo"; btn.disabled = false;
+    }).catch(function(){ btn.innerText = "?? Upload Photo"; btn.disabled = false; });
+  };
+  input.click();
+}
+
 function openPlayerProfile(playerName, teamName, role) {
   document.getElementById("profilePlayerName").innerText = playerName;
   document.getElementById("profilePlayerTeam").innerText = "🏏 " + teamName;
   document.getElementById("profilePlayerRole").innerHTML = roleBadge(role);
   document.getElementById("playerProfileModal").style.display = "flex";
+  document.getElementById("profilePhoto").style.display = "none";
+  document.getElementById("profileEmoji").style.display = "block";
+  document.getElementById("photoUploadBtn").innerText = "?? Upload Photo";
+  fetch("/player-photo/" + encodeURIComponent(playerName), { cache: "no-store" })
+  .then(function(r){ return r.json(); })
+  .then(function(d) {
+    if (d.photo_url) {
+      document.getElementById("profilePhoto").src = d.photo_url;
+      document.getElementById("profilePhoto").style.display = "block";
+      document.getElementById("profileEmoji").style.display = "none";
+      document.getElementById("photoUploadBtn").innerText = "?? Change Photo";
+    }
+  }).catch(function(){});
   ["pRuns","pBalls","pFours","pSixes","pMatches","pWickets","pRunsGiven"].forEach(function(id){ document.getElementById(id).innerText = "0"; });
   document.getElementById("pSR").innerText = "0.00"; document.getElementById("pEcon").innerText = "0.00";
   fetch(API + "/player-stats/get", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ player: playerName, team: teamName }), cache: "no-store" })
@@ -1111,3 +1149,5 @@ function finishMatch() {
 </script>
 </body>
 </html>
+
+
