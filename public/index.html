@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -447,7 +447,11 @@ ul{list-style:none;padding:0;}
 <div id="playerProfileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9996;align-items:center;justify-content:center;">
   <div style="background:linear-gradient(145deg,#111827,#0f172a);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px;width:90%;max-width:480px;max-height:85vh;overflow-y:auto;">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
-      <div style="font-size:48px;">🧑</div>
+      <div style="text-align:center;margin-bottom:10px;">
+<img id="profilePhoto" src="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #6ee7b7;">
+<div style="text-align:center;margin-bottom:10px;"><img id="profilePhoto" src="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #6ee7b7;"><div id="profileEmoji" style="font-size:48px;">&#x1F9D1;</div><button id="photoUploadBtn" onclick="uploadPlayerPhoto()" style="margin-top:8px;background:#1d4ed8;border:none;border-radius:8px;color:white;padding:6px 14px;font-size:12px;cursor:pointer;">Upload Photo</button></div>
+<button id="photoUploadBtn" onclick="uploadPlayerPhoto()" style="margin-top:8px;background:#1d4ed8;border:none;border-radius:8px;color:white;padding:6px 14px;font-size:12px;cursor:pointer;">📷 Upload Photo</button>
+</div>
       <div>
         <div id="profilePlayerName" style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:#fff;"></div>
         <div id="profilePlayerTeam" style="font-size:13px;color:#6b7280;margin-top:2px;"></div>
@@ -1101,6 +1105,31 @@ function uploadPlayerPhoto(playerName) {
   input.click();
 }
 
+function uploadPlayerPhoto() {
+  var playerName = document.getElementById("profilePlayerName").innerText;
+  var input = document.createElement("input");
+  input.type = "file"; input.accept = "image/*";
+  input.onchange = function() {
+    var file = input.files[0];
+    if (!file) return;
+    var formData = new FormData();
+    formData.append("photo", file);
+    formData.append("player_name", playerName);
+    var btn = document.getElementById("photoUploadBtn");
+    btn.innerText = "Uploading..."; btn.disabled = true;
+    fetch("/upload-photo", { method: "POST", body: formData })
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      if (d.url) {
+        document.getElementById("profilePhoto").src = d.url;
+        document.getElementById("profilePhoto").style.display = "block";
+        document.getElementById("profileEmoji").style.display = "none";
+      }
+      btn.innerText = "Upload Photo"; btn.disabled = false;
+    }).catch(function(){ btn.innerText = "Upload Photo"; btn.disabled = false; });
+  };
+  input.click();
+}
 function openPlayerProfile(playerName, teamName, role) {
   document.getElementById("profilePlayerName").innerText = playerName;
   document.getElementById("profilePlayerTeam").innerText = "🏏 " + teamName;
@@ -1149,5 +1178,6 @@ function finishMatch() {
 </script>
 </body>
 </html>
+
 
 
