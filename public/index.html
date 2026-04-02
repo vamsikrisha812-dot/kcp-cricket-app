@@ -1191,6 +1191,11 @@ function finishMatch() {
   winShown = true; saveMatchResult(winner, loser, "won", margin); showWinPopup(winner, "by " + margin);
 }
 </script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+</script>
 </body>
 </html>
 
