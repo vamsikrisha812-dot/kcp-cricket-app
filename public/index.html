@@ -1216,7 +1216,7 @@ function startLiveCamera() {
   }
 }
   var link = document.getElementById("ytLiveLink").value.trim();
-  if (!link) return alert("YouTube Live link enter cheyandi!");
+  if (!link) { alert("YouTube Live link enter cheyandi!"); return; }
   var videoId = "";
   if (link.includes("watch?v=")) videoId = link.split("watch?v=")[1].split("&")[0];
   else if (link.includes("youtu.be/")) videoId = link.split("youtu.be/")[1].split("?")[0];
