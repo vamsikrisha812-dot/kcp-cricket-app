@@ -609,8 +609,8 @@ function goBack() {
 
 function showPage(id, isBack) {
   if (!isBack) pageHistory.push(id);
-  document.querySelectorAll(".page").forEach(function(p){ p.style.display = "none"; });
-  document.getElementById(id).style.display = "block";
+  document.querySelectorAll(".page").forEach(function(p){ p.style.setProperty("display", "none", "important"); });
+  document.getElementById(id).style.setProperty("display", "block", "important");
   if (id === "matches") { loadMatchTeamDropdowns(); loadUpcomingTeamDropdowns(); loadUpcomingMatches(); }
   if (id === "points") { loadPointsTable(); }
   if (id === "matches") { loadMatchTeamDropdowns(); loadUpcomingTeamDropdowns(); loadUpcomingMatches(); }
