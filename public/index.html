@@ -396,6 +396,15 @@ ul{list-style:none;padding:0;}
   <div class="section" style="margin-bottom:16px;">
     <div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:#6ee7b7;margin-bottom:8px;">📹 Live Camera</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <button onclick="startLiveCamera()" style="background:#dc2626;">📹 Start Live</button>
+      <button onclick="stopLiveCamera()" style="background:#374151;">⏹ Stop</button>
+    </div>
+    <div id="liveCameraFrame" style="margin-top:10px;display:none;">
+      <iframe id="jitsiFrame" width="100%" height="400" frameborder="0" allow="camera; microphone; fullscreen; display-capture" style="border-radius:8px;"></iframe>
+    </div>
+  </div>
+    <div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:#6ee7b7;margin-bottom:8px;">📹 Live Camera</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
       <input id="ytLiveLink" placeholder="YouTube Live Link paste cheyandi..." style="flex:1;min-width:200px;">
       <button onclick="startLiveCamera()" style="background:#dc2626;">▶ Go Live</button>
       <button onclick="stopLiveCamera()" style="background:#374151;">⏹ Stop</button>
@@ -1196,6 +1205,16 @@ function openPlayerProfile(playerName, teamName, role) {
 }
 function closePlayerProfile() { document.getElementById("playerProfileModal").style.display = "none"; }
 function startLiveCamera() {
+  var roomName = "KCPCricketLive" + Date.now();
+  document.getElementById("jitsiFrame").src = "https://meet.jit.si/" + roomName + "#config.startWithVideoMuted=false&config.startWithAudioMuted=true";
+  document.getElementById("liveCameraFrame").style.display = "block";
+  var shareMsg = "KCP Cricket Live join cheyandi: https://meet.jit.si/" + roomName;
+  if (navigator.share) {
+    navigator.share({ title: "KCP Cricket Live", text: shareMsg, url: "https://meet.jit.si/" + roomName });
+  } else {
+    prompt("ఈ link share cheyandi:", "https://meet.jit.si/" + roomName);
+  }
+}
   var link = document.getElementById("ytLiveLink").value.trim();
   if (!link) return alert("YouTube Live link enter cheyandi!");
   var videoId = "";
