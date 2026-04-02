@@ -1215,13 +1215,14 @@ function startLiveCamera() {
     prompt("ఈ link share cheyandi:", "https://meet.jit.si/" + roomName);
   }
 }
+function startLiveCamera() {
   var link = document.getElementById("ytLiveLink").value.trim();
   if (!link) { alert("YouTube Live link enter cheyandi!"); return; }
   var videoId = "";
   if (link.includes("watch?v=")) videoId = link.split("watch?v=")[1].split("&")[0];
   else if (link.includes("youtu.be/")) videoId = link.split("youtu.be/")[1].split("?")[0];
   else if (link.includes("live/")) videoId = link.split("live/")[1].split("?")[0];
-  if (!videoId) return alert("Valid YouTube link enter cheyandi!");
+  if (!videoId) { alert("Valid YouTube link enter cheyandi!"); return; }
   document.getElementById("ytFrame").src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
   document.getElementById("liveCameraFrame").style.display = "block";
 }
