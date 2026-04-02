@@ -169,6 +169,7 @@ ul{list-style:none;padding:0;}
 <body>
 
 <nav id="nav">
+  <button onclick="goBack()" style="background:#374151;font-size:16px;">&#8592;</button>
   <button onclick="showPage('home')">Home</button>
   <button onclick="showPage('teams')">Teams</button>
   <button onclick="showPage('matches')">Matches</button>
@@ -570,10 +571,18 @@ function startApp() {
   document.getElementById("nav").style.display = "block";
   showPage("home"); loadTeams(); loadDashboardStats();
 }
+var pageHistory = [];
+function goBack() {
+  if (pageHistory.length > 1) {
+    pageHistory.pop();
+    var prev = pageHistory[pageHistory.length - 1];
+    showPage(prev, true);
+  }
+}
 
-function showPage(id) {
+function showPage(id, isBack) {
+  if (!isBack) pageHistory.push(id);
   document.querySelectorAll(".page").forEach(function(p){ p.style.display = "none"; });
-  document.getElementById(id).style.display = "block";
   if (id === "matches") { loadMatchTeamDropdowns(); loadUpcomingTeamDropdowns(); loadUpcomingMatches(); }
   if (id === "points")  { loadPointsTable(); }
 }
