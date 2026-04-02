@@ -583,6 +583,7 @@ function goBack() {
 function showPage(id, isBack) {
   if (!isBack) pageHistory.push(id);
   document.querySelectorAll(".page").forEach(function(p){ p.style.display = "none"; });
+  document.getElementById(id).style.display = "block";
   if (id === "matches") { loadMatchTeamDropdowns(); loadUpcomingTeamDropdowns(); loadUpcomingMatches(); }
   if (id === "points")  { loadPointsTable(); }
 }
