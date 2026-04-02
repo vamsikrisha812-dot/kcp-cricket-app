@@ -393,6 +393,17 @@ ul{list-style:none;padding:0;}
 
 <div id="score" class="page">
   <h2>Live Score</h2>
+  <div class="section" style="margin-bottom:16px;">
+    <div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:#6ee7b7;margin-bottom:8px;">📹 Live Camera</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <input id="ytLiveLink" placeholder="YouTube Live Link paste cheyandi..." style="flex:1;min-width:200px;">
+      <button onclick="startLiveCamera()" style="background:#dc2626;">▶ Go Live</button>
+      <button onclick="stopLiveCamera()" style="background:#374151;">⏹ Stop</button>
+    </div>
+    <div id="liveCameraFrame" style="margin-top:10px;display:none;">
+      <iframe id="ytFrame" width="100%" height="200" frameborder="0" allowfullscreen style="border-radius:8px;"></iframe>
+    </div>
+  </div>
   <h3 id="targetBox"></h3>
   <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;flex-wrap:wrap;">
     <div class="score"><span id="scoreRuns">0</span>/<span id="scoreWkts">0</span> (<span id="overs">0.0</span>)</div>
@@ -1184,6 +1195,21 @@ function openPlayerProfile(playerName, teamName, role) {
   }).catch(function(e){ console.log("Profile fetch error:", e); });
 }
 function closePlayerProfile() { document.getElementById("playerProfileModal").style.display = "none"; }
+function startLiveCamera() {
+  var link = document.getElementById("ytLiveLink").value.trim();
+  if (!link) return alert("YouTube Live link enter cheyandi!");
+  var videoId = "";
+  if (link.includes("watch?v=")) videoId = link.split("watch?v=")[1].split("&")[0];
+  else if (link.includes("youtu.be/")) videoId = link.split("youtu.be/")[1].split("?")[0];
+  else if (link.includes("live/")) videoId = link.split("live/")[1].split("?")[0];
+  if (!videoId) return alert("Valid YouTube link enter cheyandi!");
+  document.getElementById("ytFrame").src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+  document.getElementById("liveCameraFrame").style.display = "block";
+}
+function stopLiveCamera() {
+  document.getElementById("ytFrame").src = "";
+  document.getElementById("liveCameraFrame").style.display = "none";
+}
 
 function finishMatch() {
   if (winShown) return;
