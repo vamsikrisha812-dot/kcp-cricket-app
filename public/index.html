@@ -450,7 +450,7 @@ ul{list-style:none;padding:0;}
       <div style="text-align:center;margin-bottom:10px;">
 <img id="profilePhoto" src="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #6ee7b7;">
 <div style="text-align:center;margin-bottom:10px;"><img id="profilePhoto" src="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #6ee7b7;"><div id="profileEmoji" style="font-size:48px;">&#x1F9D1;</div><button id="photoUploadBtn" onclick="uploadPlayerPhoto()" style="margin-top:8px;background:#1d4ed8;border:none;border-radius:8px;color:white;padding:6px 14px;font-size:12px;cursor:pointer;">Upload Photo</button></div>
-<button id="photoUploadBtn" onclick="uploadPlayerPhoto()" style="margin-top:8px;background:#1d4ed8;border:none;border-radius:8px;color:white;padding:6px 14px;font-size:12px;cursor:pointer;">📷 Upload Photo</button>
+
 </div>
       <div>
         <div id="profilePlayerName" style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:#fff;"></div>
@@ -1099,8 +1099,8 @@ function uploadPlayerPhoto(playerName) {
         document.getElementById("profilePhoto").style.display = "block";
         document.getElementById("profileEmoji").style.display = "none";
       }
-      btn.innerText = "?? Change Photo"; btn.disabled = false;
-    }).catch(function(){ btn.innerText = "?? Upload Photo"; btn.disabled = false; });
+      btn.innerText = "Change Photo"; btn.disabled = false;
+    }).catch(function(){ btn.innerText = "Upload Photo"; btn.disabled = false; });
   };
   input.click();
 }
@@ -1137,7 +1137,7 @@ function openPlayerProfile(playerName, teamName, role) {
   document.getElementById("playerProfileModal").style.display = "flex";
   document.getElementById("profilePhoto").style.display = "none";
   document.getElementById("profileEmoji").style.display = "block";
-  document.getElementById("photoUploadBtn").innerText = "?? Upload Photo";
+  document.getElementById("photoUploadBtn").innerText = "Upload Photo";
   fetch("/player-photo/" + encodeURIComponent(playerName), { cache: "no-store" })
   .then(function(r){ return r.json(); })
   .then(function(d) {
@@ -1145,7 +1145,7 @@ function openPlayerProfile(playerName, teamName, role) {
       document.getElementById("profilePhoto").src = d.photo_url;
       document.getElementById("profilePhoto").style.display = "block";
       document.getElementById("profileEmoji").style.display = "none";
-      document.getElementById("photoUploadBtn").innerText = "?? Change Photo";
+      document.getElementById("photoUploadBtn").innerText = "Change Photo";
     }
   }).catch(function(){});
   ["pRuns","pBalls","pFours","pSixes","pMatches","pWickets","pRunsGiven"].forEach(function(id){ document.getElementById(id).innerText = "0"; });
