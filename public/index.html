@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -368,7 +368,7 @@ ul{list-style:none;padding:0;}
       <button onclick="stopLiveCamera()" style="background:#374151;">Stop</button>
     </div>
     <div id="liveCameraFrame" style="margin-top:10px;display:none;">
-      <iframe id="jitsiFrame" width="100%" height="350" frameborder="0" allow="camera; microphone; fullscreen; display-capture" style="border-radius:8px;"></iframe>
+      <video id="liveVideoEl" width="100%" style="border-radius:8px;max-height:350px;" autoplay muted playsinline></video>
     </div>
   </div>
   <h3 id="targetBox"></h3>
@@ -481,7 +481,7 @@ function getTeamName(t) {
 function togglePassword() {
   var pw = document.getElementById("password"), btn = document.getElementById("pwToggleBtn");
   pw.type = pw.type === "password" ? "text" : "password";
-  btn.innerText = pw.type === "password" ? "👁️" : "🙈";
+  btn.innerText = pw.type === "password" ? "???" : "??";
 }
 
 function roleBadge(role) {
@@ -516,13 +516,13 @@ function toggleAuth() {
   document.getElementById("authBtn").innerText = isLogin ? "Login" : "Register";
   document.getElementById("switchText").innerText = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
   document.getElementById("password").type = "password";
-  document.getElementById("pwToggleBtn").innerText = "👁️";
+  document.getElementById("pwToggleBtn").innerText = "???";
 }
 
 function authenticate() {
   var u = document.getElementById("username").value.trim();
   var p = document.getElementById("password").value.trim();
-  if (!u || !p) return alert("Username Password enter చేయండి");
+  if (!u || !p) return alert("Username Password enter ??????");
   if (isLogin) {
     fetch(API + "/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: u, password: p }) })
     .then(function(r){ return r.json(); })
@@ -580,7 +580,7 @@ function loadPointsTable() {
   .then(function(data) {
     var tbody = document.getElementById("pointsTableBody");
     if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" class="no-results">No matches played yet.</td></tr>'; return; }
-    var medals = ["🥇", "🥈", "🥉"];
+    var medals = ["??", "??", "??"];
     tbody.innerHTML = data.map(function(row, i) {
       return '<tr><td class="rank">' + (medals[i] || (i+1)) + '</td><td class="team-name">' + (row.team_name || "-") + '</td><td>' + (row.matches_played||0) + '</td><td style="color:#6ee7b7;font-weight:700;">' + (row.wins||0) + '</td><td style="color:#f87171;">' + (row.losses||0) + '</td><td class="pts">' + (row.points||0) + '</td></tr>';
     }).join("");
@@ -592,7 +592,7 @@ function loadPointsTable() {
     var el = document.getElementById("pointsMatchResults");
     if (!data.length) { el.innerHTML = "<div class='no-results'>No matches played yet.</div>"; return; }
     el.innerHTML = data.map(function(m) {
-      return '<div class="match-result-card"><div class="winner-row">🏆 ' + (m.winner||"-") + ' won</div><div class="detail-row">vs ' + (m.loser||"-") + ' · ' + (m.win_type||"") + ' by ' + (m.margin||"") + ' · ' + (m.played_on||"") + '</div></div>';
+      return '<div class="match-result-card"><div class="winner-row">?? ' + (m.winner||"-") + ' won</div><div class="detail-row">vs ' + (m.loser||"-") + ' � ' + (m.win_type||"") + ' by ' + (m.margin||"") + ' � ' + (m.played_on||"") + '</div></div>';
     }).join("");
   }).catch(function(){});
 }
@@ -814,15 +814,15 @@ var inn1BatTeam = "", inn1BowlTeam = "", inn1BatPlayers = [], inn1BowlPlayers = 
 
 function startMatch() {
   var t1 = document.getElementById("batTeam").value, t2 = document.getElementById("bowlTeam").value;
-  if (!t1 || !t2) return alert("రెండు teams select చేయండి");
-  if (t1 === t2) return alert("Different teams select చేయండి");
+  if (!t1 || !t2) return alert("????? teams select ??????");
+  if (t1 === t2) return alert("Different teams select ??????");
   tossTeams = [t1, t2]; tossCallingTeamIndex = -1; tossWinnerIndex = -1; tossFlipped = false;
   document.getElementById("tossBtnTeam1").innerText = t1;
   document.getElementById("tossBtnTeam2").innerText = t2;
   document.getElementById("tossBtnTeam1").classList.remove("selected");
   document.getElementById("tossBtnTeam2").classList.remove("selected");
   document.getElementById("tossResultBox").style.display = "none";
-  document.getElementById("tossCoin").innerText = "🪙";
+  document.getElementById("tossCoin").innerText = "??";
   document.getElementById("tossInstruction").innerText = "Select a team, then flip the coin";
   document.getElementById("tossFlipBtn").disabled = true;
   document.getElementById("tossOverlay").classList.add("open");
@@ -843,7 +843,7 @@ function flipCoin() {
   setTimeout(function() {
     coin.classList.remove("spinning");
     var result = Math.random() < 0.5 ? 0 : 1; tossWinnerIndex = result;
-    coin.innerText = result === 0 ? "🟡" : "⚪";
+    coin.innerText = result === 0 ? "??" : "?";
     document.getElementById("tossInstruction").innerText = "";
     document.getElementById("tossWinnerText").innerText = tossTeams[tossWinnerIndex] + " won the toss!";
     document.getElementById("tossResultBox").style.display = "block";
@@ -1073,21 +1073,24 @@ function openPlayerProfile(playerName, teamName, role) {
   document.getElementById("pSR").innerText = "0.00"; document.getElementById("pEcon").innerText = "0.00";
 }
 function closePlayerProfile() { document.getElementById("playerProfileModal").style.display = "none"; }
-
 function startLiveCamera() {
-  var roomName = "KCPCricket" + Date.now();
-  document.getElementById("jitsiFrame").src = "https://meet.jit.si/" + roomName + "#config.startWithVideoMuted=false&config.startWithAudioMuted=false";
-  document.getElementById("liveCameraFrame").style.display = "block";
-  var link = "https://meet.jit.si/" + roomName;
-  if (navigator.share) {
-    navigator.share({ title: "KCP Cricket Live", text: "Live join cheyandi: " + link, url: link });
-  } else {
-    prompt("ఈ link share cheyandi:", link);
-  }
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  .then(function(stream) {
+    var video = document.getElementById("liveVideoEl");
+    video.srcObject = stream;
+    video.play();
+    document.getElementById("liveCameraFrame").style.display = "block";
+    window._liveStream = stream;
+  }).catch(function(err) {
+    alert("Camera access error: " + err.message);
+  });
 }
 
 function stopLiveCamera() {
-  document.getElementById("jitsiFrame").src = "";
+  if (window._liveStream) {
+    window._liveStream.getTracks().forEach(function(t){ t.stop(); });
+    window._liveStream = null;
+  }
   document.getElementById("liveCameraFrame").style.display = "none";
 }
 
