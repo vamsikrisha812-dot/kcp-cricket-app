@@ -23,18 +23,22 @@ app.use(express.json());
 // =============================================
 // ✅ CHANGE ONLY THESE MySQL CREDENTIALS BELOW
 // =============================================
-const db = mysql.createConnection({
-    host: process.env.MYSQLHOST,
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
-    port: process.env.MYSQLPORT || 3306
+const db = mysql.createPool({
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 // ============================================
 
-db.connect(err => {
-    if(err){ console.log("❌ MySQL Connection Error:", err.message); return; }
-    console.log("✅ MySQL Connected!");
+db.getConnection((err, connection) => {
+  if(err){ console.log("❌ MySQL Error:", err.message); return; }
+  console.log("✅ MySQL Connected!");
+  connection.release();
 
     db.query(`CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
