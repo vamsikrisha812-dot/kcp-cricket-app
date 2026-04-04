@@ -996,6 +996,7 @@ function switchInnings() {
 function saveMatchResult(winner, loser, winType, margin) {
   var today = new Date().toLocaleDateString("en-IN");
   fetch(API + "/match-results", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ winner: winner, loser: loser, win_type: winType, margin: margin, played_on: today }) }).catch(function(){});
+  fetch(API + "/points-table/update", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ winner: winner, loser: loser }) }).catch(function(){});
   saveAllPlayerStats();
 }
 
@@ -1100,4 +1101,5 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+
 
